@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using Framework.Yggdrasil;
 
@@ -7,7 +9,6 @@ namespace Game.Named.TurnSys
     public class TurnSystem : IService
     {
         private readonly List<ITurnPlayer> m_players = new();
-        private UniTaskCompletionSource m_tcs = new();
 
         public void Start()
         {
@@ -16,7 +17,6 @@ namespace Game.Named.TurnSys
                 CreateDefaultPlayers();
             }
 
-            m_tcs = new UniTaskCompletionSource();
             RunGame().Forget();
         }
 
@@ -35,13 +35,33 @@ namespace Game.Named.TurnSys
 
         private async UniTask RunGame()
         {
-            while (m_tcs.UnsafeGetStatus() != UniTaskStatus.Canceled)
-            {
-            }
         }
 
         private async UniTask RunRound()
         {
+        }
+
+        public async UniTaskVoid StartAsync()
+        {
+            var completionSource = AutoResetUniTaskCompletionSource.Create();
+
+            await completionSource.Task;
+        }
+
+        private async UniTask SomeAsyncOperation(CancellationToken token)
+        {
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    // 模拟长时间运行的任务
+                    Console.WriteLine("操作进行中...");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("异步操作被取消");
+            }
         }
     }
 }

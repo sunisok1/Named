@@ -1,4 +1,6 @@
-﻿using Core;
+﻿using System.Threading;
+using Core;
+using Cysharp.Threading.Tasks;
 using Framework.Yggdrasil;
 using Framework.Yggdrasil.Services;
 using Game.Named.Control;
@@ -9,6 +11,11 @@ namespace Game.Named
 {
     public class GameRunner : GameRunnerBase<GameService>
     {
+        protected override void Start()
+        {
+            base.Start();
+            GameService.CancellationToken = destroyCancellationToken;
+        }
     }
 
     public class GamePack : IGamePack
@@ -29,6 +36,8 @@ namespace Game.Named
         {
             m_logger = logger;
         }
+
+        public CancellationToken CancellationToken { get; set; }
 
         public void OnAdd()
         {
