@@ -6,7 +6,7 @@ using Framework.Yggdrasil;
 
 namespace Game.Named.TurnSys
 {
-    public class TurnSystem : IService
+    public class TurnSystem : ITurnSystem
     {
         private readonly List<ITurnPlayer> m_players = new();
 
